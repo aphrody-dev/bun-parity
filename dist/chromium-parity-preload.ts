@@ -6,7 +6,7 @@
  */
 
 // @bun
-// src/polyfills/scheduler.ts
+// ../../packages/bun-parity/src/polyfills/scheduler.ts
 class TaskPriorityChangeEvent extends Event {
   previousPriority;
   constructor(type, init) {
@@ -29,7 +29,9 @@ class TaskSignal extends AbortSignal {
       return;
     const previousPriority = this._priority;
     this._priority = newPriority;
-    const event = new TaskPriorityChangeEvent("prioritychange", { previousPriority });
+    const event = new TaskPriorityChangeEvent("prioritychange", {
+      previousPriority
+    });
     this.dispatchEvent(event);
   }
 }
@@ -133,7 +135,9 @@ class PrioritizedScheduler {
             task.priority = signal.priority;
             this._sortQueue();
           };
-          signal.addEventListener("prioritychange", onPriorityChange, { once: false });
+          signal.addEventListener("prioritychange", onPriorityChange, {
+            once: false
+          });
         }
         if (signal) {
           const onAbort = () => {
@@ -201,7 +205,7 @@ function installScheduler(target = globalThis) {
   return target.scheduler;
 }
 
-// src/polyfills/locks.ts
+// ../../packages/bun-parity/src/polyfills/locks.ts
 class LockManager {
   _reqId = 0;
   _held = new Map;
@@ -382,7 +386,7 @@ function installLocks(target = globalThis) {
   return target.navigator.locks;
 }
 
-// src/polyfills/trusted-types.ts
+// ../../packages/bun-parity/src/polyfills/trusted-types.ts
 var SECRET_TOKEN = Symbol("TrustedTypeToken");
 
 class TrustedHTML {
@@ -583,7 +587,7 @@ function installTrustedTypes(target = globalThis) {
   return target.trustedTypes;
 }
 
-// src/polyfills/cache-storage.ts
+// ../../packages/bun-parity/src/polyfills/cache-storage.ts
 import { Database } from "bun:sqlite";
 function normalizeRequestUrl(input) {
   if (typeof input === "string") {
@@ -830,7 +834,7 @@ function installCaches(target = globalThis) {
   return target.caches;
 }
 
-// src/polyfills/compression.ts
+// ../../packages/bun-parity/src/polyfills/compression.ts
 var NativeCompressionStream = globalThis.CompressionStream;
 var NativeDecompressionStream = globalThis.DecompressionStream;
 function normalizeFormat(format) {
@@ -906,7 +910,7 @@ function installCompression(target = globalThis) {
   }
 }
 
-// src/polyfills/mime.ts
+// ../../packages/bun-parity/src/polyfills/mime.ts
 var CHROMIUM_MIME_MAP = {
   wgsl: "text/wgsl",
   jxl: "image/jxl",
@@ -1017,7 +1021,7 @@ function installMime(target = globalThis) {
   }
 }
 
-// src/polyfills/doh.ts
+// ../../packages/bun-parity/src/polyfills/doh.ts
 var DNS_RECORD_TYPE_MAP = {
   A: 1,
   NS: 2,
@@ -1187,7 +1191,7 @@ function installDns(target = globalThis) {
   }
 }
 
-// src/polyfills/index.ts
+// ../../packages/bun-parity/src/polyfills/index.ts
 function installAllChromiumPolyfills(target = globalThis) {
   const scheduler = installScheduler(target);
   const locks = installLocks(target);
@@ -1213,7 +1217,7 @@ function installAllChromiumPolyfills(target = globalThis) {
   };
 }
 
-// src/preload-entry.ts
+// ../../packages/bun-parity/src/preload-entry.ts
 var installedParity = installAllChromiumPolyfills(globalThis);
 export {
   BunChromiumDNS,

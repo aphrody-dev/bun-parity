@@ -27,5 +27,7 @@
     "sovereign"
   ],
   "author": "Antigravity Engineering",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {}
 }
