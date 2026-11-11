@@ -7,7 +7,9 @@ import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import type { DomainReport, ParityItem, ScanOptions } from "../types.ts";
 
-export async function scanJsDomain(options: ScanOptions): Promise<DomainReport> {
+export async function scanJsDomain(
+  options: ScanOptions,
+): Promise<DomainReport> {
   const chromiumPath = options.chromiumPath ?? "C:/src/chromium/src";
   const flagsFile = join(chromiumPath, "v8/src/flags/flag-definitions.h");
 
@@ -34,7 +36,8 @@ export async function scanJsDomain(options: ScanOptions): Promise<DomainReport> 
   items.push({
     domain: "js",
     name: "ECMAScript Iterator Helpers (Iterator.from, .map, .filter, .take...)",
-    chromiumSource: "v8/src/flags/flag-definitions.h (harmony_iterator_helpers)",
+    chromiumSource:
+      "v8/src/flags/flag-definitions.h (harmony_iterator_helpers)",
     bunTarget: "globalThis.Iterator",
     status: hasIteratorHelpers ? "parity" : "partial",
     details: hasIteratorHelpers
@@ -68,7 +71,8 @@ export async function scanJsDomain(options: ScanOptions): Promise<DomainReport> 
   items.push({
     domain: "js",
     name: "Promise.withResolvers",
-    chromiumSource: "v8/src/flags/flag-definitions.h (harmony_promise_withresolvers)",
+    chromiumSource:
+      "v8/src/flags/flag-definitions.h (harmony_promise_withresolvers)",
     bunTarget: "Promise.withResolvers",
     status: hasPromiseWithResolvers ? "parity" : "missing",
     details: hasPromiseWithResolvers
@@ -85,7 +89,9 @@ export async function scanJsDomain(options: ScanOptions): Promise<DomainReport> 
     chromiumSource: "v8/src/flags/flag-definitions.h (harmony_promise_try)",
     bunTarget: "Promise.try",
     status: hasPromiseTry ? "parity" : "missing",
-    details: hasPromiseTry ? "Natively supported on Promise constructor" : "Promise.try missing",
+    details: hasPromiseTry
+      ? "Natively supported on Promise constructor"
+      : "Promise.try missing",
     patchAvailable: false,
   });
 
@@ -97,12 +103,15 @@ export async function scanJsDomain(options: ScanOptions): Promise<DomainReport> 
     chromiumSource: "v8/src/flags/flag-definitions.h (harmony_regexp_escape)",
     bunTarget: "RegExp.escape",
     status: hasRegExpEscape ? "parity" : "missing",
-    details: hasRegExpEscape ? "Natively supported on RegExp constructor" : "RegExp.escape missing",
+    details: hasRegExpEscape
+      ? "Natively supported on RegExp constructor"
+      : "RegExp.escape missing",
     patchAvailable: false,
   });
 
   // 6. Float16Array
-  const hasFloat16Array = typeof (globalThis as any).Float16Array === "function";
+  const hasFloat16Array =
+    typeof (globalThis as any).Float16Array === "function";
   items.push({
     domain: "js",
     name: "Float16Array (IEEE 754 half-precision float)",
@@ -124,7 +133,8 @@ export async function scanJsDomain(options: ScanOptions): Promise<DomainReport> 
   items.push({
     domain: "js",
     name: "Explicit Resource Management (using, DisposableStack, AsyncDisposableStack)",
-    chromiumSource: "v8/src/flags/flag-definitions.h (harmony_explicit_resource_management)",
+    chromiumSource:
+      "v8/src/flags/flag-definitions.h (harmony_explicit_resource_management)",
     bunTarget: "globalThis.DisposableStack / Symbol.dispose",
     status: hasDisposableStack ? "parity" : "partial",
     details: hasDisposableStack
@@ -168,7 +178,8 @@ export async function scanJsDomain(options: ScanOptions): Promise<DomainReport> 
   items.push({
     domain: "js",
     name: "ArrayBuffer.prototype.transfer / transferToFixedLength",
-    chromiumSource: "v8/src/flags/flag-definitions.h (harmony_arraybuffer_transfer)",
+    chromiumSource:
+      "v8/src/flags/flag-definitions.h (harmony_arraybuffer_transfer)",
     bunTarget: "ArrayBuffer.prototype.transfer",
     status: hasAbTransfer ? "parity" : "missing",
     details: hasAbTransfer
@@ -180,7 +191,10 @@ export async function scanJsDomain(options: ScanOptions): Promise<DomainReport> 
   const nativeParityCount = items.filter((i) => i.status === "parity").length;
   const patchedParityCount = items.filter(
     (i) =>
-      i.status === "parity" || i.status === "partial" || i.status === "patched" || i.patchAvailable,
+      i.status === "parity" ||
+      i.status === "partial" ||
+      i.status === "patched" ||
+      i.patchAvailable,
   ).length;
 
   return {

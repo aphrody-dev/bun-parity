@@ -7,7 +7,9 @@ import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import type { DomainReport, ParityItem, ScanOptions } from "../types.ts";
 
-export async function scanCssDomain(options: ScanOptions): Promise<DomainReport> {
+export async function scanCssDomain(
+  options: ScanOptions,
+): Promise<DomainReport> {
   const chromiumPath = options.chromiumPath ?? "C:/src/chromium/src";
   const cssPropsFile = join(
     chromiumPath,
@@ -51,7 +53,8 @@ export async function scanCssDomain(options: ScanOptions): Promise<DomainReport>
     {
       name: "CSS Anchor Positioning (anchor-name & position-anchor)",
       prop: "anchor-name",
-      sample: ".anchor { anchor-name: --my-anchor; } .tooltip { position-anchor: --my-anchor; }",
+      sample:
+        ".anchor { anchor-name: --my-anchor; } .tooltip { position-anchor: --my-anchor; }",
       source: "blink/renderer/core/css/css_properties.json5",
     },
     {
@@ -82,10 +85,13 @@ export async function scanCssDomain(options: ScanOptions): Promise<DomainReport>
                 path: "dummy.css",
                 namespace: "virtual",
               }));
-              build.onLoad({ filter: /dummy\.css/, namespace: "virtual" }, () => ({
-                contents: feat.sample,
-                loader: "css",
-              }));
+              build.onLoad(
+                { filter: /dummy\.css/, namespace: "virtual" },
+                () => ({
+                  contents: feat.sample,
+                  loader: "css",
+                }),
+              );
             },
           },
         ],
@@ -126,7 +132,10 @@ export async function scanCssDomain(options: ScanOptions): Promise<DomainReport>
   const nativeParityCount = items.filter((i) => i.status === "parity").length;
   const patchedParityCount = items.filter(
     (i) =>
-      i.status === "parity" || i.status === "partial" || i.status === "patched" || i.patchAvailable,
+      i.status === "parity" ||
+      i.status === "partial" ||
+      i.status === "patched" ||
+      i.patchAvailable,
   ).length;
 
   return {

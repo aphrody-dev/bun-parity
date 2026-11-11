@@ -7,7 +7,9 @@ import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import type { DomainReport, ParityItem, ScanOptions } from "../types.ts";
 
-export async function scanHtmlDomain(options: ScanOptions): Promise<DomainReport> {
+export async function scanHtmlDomain(
+  options: ScanOptions,
+): Promise<DomainReport> {
   const chromiumPath = options.chromiumPath ?? "C:/src/chromium/src";
   const tagNamesFile = join(
     chromiumPath,
@@ -32,7 +34,8 @@ export async function scanHtmlDomain(options: ScanOptions): Promise<DomainReport
   }
 
   // 1. HTMLRewriter Capability
-  const hasHTMLRewriter = typeof (globalThis as any).HTMLRewriter === "function";
+  const hasHTMLRewriter =
+    typeof (globalThis as any).HTMLRewriter === "function";
   items.push({
     domain: "html",
     name: "HTMLRewriter Streaming Parser",
@@ -56,7 +59,9 @@ export async function scanHtmlDomain(options: ScanOptions): Promise<DomainReport
         },
       });
       rewriter.transform(
-        new Response('<template shadowrootmode="open"><span>DSD</span></template>'),
+        new Response(
+          '<template shadowrootmode="open"><span>DSD</span></template>',
+        ),
       );
       dsdSupported = true;
     } catch {
@@ -102,7 +107,10 @@ export async function scanHtmlDomain(options: ScanOptions): Promise<DomainReport
   const nativeParityCount = items.filter((i) => i.status === "parity").length;
   const patchedParityCount = items.filter(
     (i) =>
-      i.status === "parity" || i.status === "partial" || i.status === "patched" || i.patchAvailable,
+      i.status === "parity" ||
+      i.status === "partial" ||
+      i.status === "patched" ||
+      i.patchAvailable,
   ).length;
 
   return {

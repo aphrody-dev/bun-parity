@@ -7,7 +7,9 @@ import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import type { DomainReport, ParityItem, ScanOptions } from "../types.ts";
 
-export async function scanDnsDomain(options: ScanOptions): Promise<DomainReport> {
+export async function scanDnsDomain(
+  options: ScanOptions,
+): Promise<DomainReport> {
   const chromiumPath = options.chromiumPath ?? "C:/src/chromium/src";
   const dohFile = join(chromiumPath, "net/dns/public/doh_provider_entry.cc");
 
@@ -15,7 +17,8 @@ export async function scanDnsDomain(options: ScanOptions): Promise<DomainReport>
   if (existsSync(dohFile)) {
     try {
       const content = readFileSync(dohFile, "utf-8");
-      const providerMatches = content.match(/MAKE_STATIC_STORAGE_BASE_FEATURE\(([^,]+),/g) ?? [];
+      const providerMatches =
+        content.match(/MAKE_STATIC_STORAGE_BASE_FEATURE\(([^,]+),/g) ?? [];
       dohProviderCount = providerMatches.length;
     } catch {
       dohProviderCount = 20;
@@ -28,7 +31,8 @@ export async function scanDnsDomain(options: ScanOptions): Promise<DomainReport>
 
   // 1. Standard DNS Lookup
   const hasBunDns =
-    typeof (Bun as any).dns === "object" && typeof (Bun as any).dns.lookup === "function";
+    typeof (Bun as any).dns === "object" &&
+    typeof (Bun as any).dns.lookup === "function";
   items.push({
     domain: "dns",
     name: "Standard DNS Resolver (A, AAAA, MX, TXT, SRV, NS, PTR, CNAME)",
@@ -76,7 +80,8 @@ export async function scanDnsDomain(options: ScanOptions): Promise<DomainReport>
   });
 
   // 4. RFC 8305 Happy Eyeballs v2 Dual-Stack Racing
-  const hasHappyEyeballs = typeof (globalThis as any).BunChromiumDNS?.happyEyeballs === "function";
+  const hasHappyEyeballs =
+    typeof (globalThis as any).BunChromiumDNS?.happyEyeballs === "function";
   items.push({
     domain: "dns",
     name: "RFC 8305 Happy Eyeballs v2 Dual-Stack Racing",
@@ -93,7 +98,10 @@ export async function scanDnsDomain(options: ScanOptions): Promise<DomainReport>
   const nativeParityCount = items.filter((i) => i.status === "parity").length;
   const patchedParityCount = items.filter(
     (i) =>
-      i.status === "parity" || i.status === "partial" || i.status === "patched" || i.patchAvailable,
+      i.status === "parity" ||
+      i.status === "partial" ||
+      i.status === "patched" ||
+      i.patchAvailable,
   ).length;
 
   return {

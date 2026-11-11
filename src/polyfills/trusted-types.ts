@@ -48,7 +48,9 @@ export class TrustedScriptURL {
 
   constructor(token: any, value: string) {
     if (token !== SECRET_TOKEN) {
-      throw new TypeError("Illegal constructor invocation for TrustedScriptURL");
+      throw new TypeError(
+        "Illegal constructor invocation for TrustedScriptURL",
+      );
     }
     this._value = String(value);
   }
@@ -65,7 +67,10 @@ export class TrustedScriptURL {
 export interface TrustedTypePolicyOptions {
   createHTML?: (input: string, ...args: any[]) => string | null | undefined;
   createScript?: (input: string, ...args: any[]) => string | null | undefined;
-  createScriptURL?: (input: string, ...args: any[]) => string | null | undefined;
+  createScriptURL?: (
+    input: string,
+    ...args: any[]
+  ) => string | null | undefined;
 }
 
 export class TrustedTypePolicy {
@@ -74,7 +79,9 @@ export class TrustedTypePolicy {
 
   constructor(token: any, name: string, options: TrustedTypePolicyOptions) {
     if (token !== SECRET_TOKEN) {
-      throw new TypeError("Illegal constructor invocation for TrustedTypePolicy");
+      throw new TypeError(
+        "Illegal constructor invocation for TrustedTypePolicy",
+      );
     }
     this.name = name;
     this._options = options;
@@ -82,33 +89,45 @@ export class TrustedTypePolicy {
 
   createHTML(input: string, ...args: any[]): TrustedHTML {
     if (!this._options.createHTML) {
-      throw new TypeError(`Policy '${this.name}' does not implement createHTML`);
+      throw new TypeError(
+        `Policy '${this.name}' does not implement createHTML`,
+      );
     }
     const result = this._options.createHTML(String(input), ...args);
     if (typeof result !== "string") {
-      throw new TypeError(`Policy '${this.name}' createHTML returned non-string`);
+      throw new TypeError(
+        `Policy '${this.name}' createHTML returned non-string`,
+      );
     }
     return new TrustedHTML(SECRET_TOKEN, result);
   }
 
   createScript(input: string, ...args: any[]): TrustedScript {
     if (!this._options.createScript) {
-      throw new TypeError(`Policy '${this.name}' does not implement createScript`);
+      throw new TypeError(
+        `Policy '${this.name}' does not implement createScript`,
+      );
     }
     const result = this._options.createScript(String(input), ...args);
     if (typeof result !== "string") {
-      throw new TypeError(`Policy '${this.name}' createScript returned non-string`);
+      throw new TypeError(
+        `Policy '${this.name}' createScript returned non-string`,
+      );
     }
     return new TrustedScript(SECRET_TOKEN, result);
   }
 
   createScriptURL(input: string, ...args: any[]): TrustedScriptURL {
     if (!this._options.createScriptURL) {
-      throw new TypeError(`Policy '${this.name}' does not implement createScriptURL`);
+      throw new TypeError(
+        `Policy '${this.name}' does not implement createScriptURL`,
+      );
     }
     const result = this._options.createScriptURL(String(input), ...args);
     if (typeof result !== "string") {
-      throw new TypeError(`Policy '${this.name}' createScriptURL returned non-string`);
+      throw new TypeError(
+        `Policy '${this.name}' createScriptURL returned non-string`,
+      );
     }
     return new TrustedScriptURL(SECRET_TOKEN, result);
   }
@@ -125,12 +144,18 @@ export class TrustedTypePolicyFactory {
     return this._defaultPolicy;
   }
 
-  createPolicy(name: string, policyOptions: TrustedTypePolicyOptions): TrustedTypePolicy {
+  createPolicy(
+    name: string,
+    policyOptions: TrustedTypePolicyOptions,
+  ): TrustedTypePolicy {
     if (typeof name !== "string" || name.length === 0) {
       throw new TypeError("Policy name must be a non-empty string");
     }
     if (this._policies.has(name)) {
-      throw new DOMException(`Policy with name '${name}' already exists`, "TypeError");
+      throw new DOMException(
+        `Policy with name '${name}' already exists`,
+        "TypeError",
+      );
     }
 
     const policy = new TrustedTypePolicy(SECRET_TOKEN, name, policyOptions);
@@ -181,7 +206,11 @@ export class TrustedTypePolicyFactory {
     return null;
   }
 
-  getPropertyType(tagName: string, property: string, _elementNs?: string): string | null {
+  getPropertyType(
+    tagName: string,
+    property: string,
+    _elementNs?: string,
+  ): string | null {
     const tag = tagName.toLowerCase();
     const prop = property.toLowerCase();
 
@@ -199,7 +228,9 @@ export class TrustedTypePolicyFactory {
   }
 }
 
-export function installTrustedTypes(target: any = globalThis): TrustedTypePolicyFactory {
+export function installTrustedTypes(
+  target: any = globalThis,
+): TrustedTypePolicyFactory {
   if (!target.TrustedHTML) {
     Object.defineProperty(target, "TrustedHTML", {
       value: TrustedHTML,

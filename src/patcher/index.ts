@@ -6,7 +6,9 @@ import type { PatchOptions, PatchResult } from "../types.ts";
 import { generatePreloadPatch } from "./preload-gen.ts";
 import { generateRustPatches } from "./rust-gen.ts";
 
-export async function runFullAutoPatch(options: PatchOptions = {}): Promise<PatchResult> {
+export async function runFullAutoPatch(
+  options: PatchOptions = {},
+): Promise<PatchResult> {
   // 1. Generate Runtime Preload Patch (Artifact 1)
   const preloadResult = await generatePreloadPatch(options);
 

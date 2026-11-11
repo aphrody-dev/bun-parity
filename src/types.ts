@@ -3,7 +3,15 @@
  */
 
 export type ParityDomain =
-  "html" | "css" | "js" | "api" | "texte" | "data-assets" | "dns" | "tls" | "stack";
+  | "html"
+  | "css"
+  | "js"
+  | "api"
+  | "texte"
+  | "data-assets"
+  | "dns"
+  | "tls"
+  | "stack";
 
 export type ParityStatus = "parity" | "missing" | "partial" | "patched";
 

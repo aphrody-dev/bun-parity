@@ -2,7 +2,8 @@
  * Extended CompressionStream & DecompressionStream with 'br' and 'zstd' parity
  */
 
-export type ParityCompressionFormat = "gzip" | "deflate" | "deflate-raw" | "zstd" | "br" | "brotli";
+export type ParityCompressionFormat =
+  "gzip" | "deflate" | "deflate-raw" | "zstd" | "br" | "brotli";
 
 const NativeCompressionStream = globalThis.CompressionStream;
 const NativeDecompressionStream = globalThis.DecompressionStream;

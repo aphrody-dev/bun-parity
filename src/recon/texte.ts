@@ -7,9 +7,14 @@ import { existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import type { DomainReport, ParityItem, ScanOptions } from "../types.ts";
 
-export async function scanTexteDomain(options: ScanOptions): Promise<DomainReport> {
+export async function scanTexteDomain(
+  options: ScanOptions,
+): Promise<DomainReport> {
   const chromiumPath = options.chromiumPath ?? "C:/src/chromium/src";
-  const wtfTextDir = join(chromiumPath, "third_party/blink/renderer/platform/wtf/text");
+  const wtfTextDir = join(
+    chromiumPath,
+    "third_party/blink/renderer/platform/wtf/text",
+  );
 
   let wtfFilesCount = 0;
   if (existsSync(wtfTextDir)) {
@@ -53,7 +58,8 @@ export async function scanTexteDomain(options: ScanOptions): Promise<DomainRepor
   items.push({
     domain: "texte",
     name: "Intl.Segmenter (Grapheme, Word, Sentence segmentation)",
-    chromiumSource: "third_party/blink/renderer/platform/wtf/text/character_names.h",
+    chromiumSource:
+      "third_party/blink/renderer/platform/wtf/text/character_names.h",
     bunTarget: "Intl.Segmenter",
     status: segmenterWorks ? "parity" : "missing",
     details: segmenterWorks
@@ -67,7 +73,8 @@ export async function scanTexteDomain(options: ScanOptions): Promise<DomainRepor
   items.push({
     domain: "texte",
     name: "Intl.DurationFormat (ECMAScript 2024)",
-    chromiumSource: "v8/src/flags/flag-definitions.h (harmony_intl_duration_format)",
+    chromiumSource:
+      "v8/src/flags/flag-definitions.h (harmony_intl_duration_format)",
     bunTarget: "Intl.DurationFormat",
     status: hasDurationFormat ? "parity" : "missing",
     details: hasDurationFormat
@@ -79,11 +86,13 @@ export async function scanTexteDomain(options: ScanOptions): Promise<DomainRepor
   // 4. String.prototype.isWellFormed & toWellFormed
   const strProto = String.prototype as any;
   const hasWellFormed =
-    typeof strProto.isWellFormed === "function" && typeof strProto.toWellFormed === "function";
+    typeof strProto.isWellFormed === "function" &&
+    typeof strProto.toWellFormed === "function";
   items.push({
     domain: "texte",
     name: "String.prototype.isWellFormed & toWellFormed (Unicode RFC 2781)",
-    chromiumSource: "third_party/blink/renderer/platform/wtf/text/string_impl.h",
+    chromiumSource:
+      "third_party/blink/renderer/platform/wtf/text/string_impl.h",
     bunTarget: "String.prototype.isWellFormed",
     status: hasWellFormed ? "parity" : "missing",
     details: hasWellFormed
@@ -97,7 +106,8 @@ export async function scanTexteDomain(options: ScanOptions): Promise<DomainRepor
   items.push({
     domain: "texte",
     name: "Visual Grapheme Cell Width (Bun.stringWidth)",
-    chromiumSource: "third_party/blink/renderer/platform/fonts/shaping/shape_result.h",
+    chromiumSource:
+      "third_party/blink/renderer/platform/fonts/shaping/shape_result.h",
     bunTarget: "Bun.stringWidth",
     status: hasStringWidth ? "parity" : "missing",
     details: hasStringWidth
@@ -127,7 +137,10 @@ export async function scanTexteDomain(options: ScanOptions): Promise<DomainRepor
   const nativeParityCount = items.filter((i) => i.status === "parity").length;
   const patchedParityCount = items.filter(
     (i) =>
-      i.status === "parity" || i.status === "partial" || i.status === "patched" || i.patchAvailable,
+      i.status === "parity" ||
+      i.status === "partial" ||
+      i.status === "patched" ||
+      i.patchAvailable,
   ).length;
 
   return {

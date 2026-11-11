@@ -2,9 +2,17 @@
  * Consolidated Chromium Web Standards Polyfill Suite for Bun
  */
 
-import { installScheduler, PrioritizedScheduler, TaskController, TaskSignal } from "./scheduler.ts";
+import {
+  installScheduler,
+  PrioritizedScheduler,
+  TaskController,
+  TaskSignal,
+} from "./scheduler.ts";
 import { installLocks, LockManager } from "./locks.ts";
-import { installTrustedTypes, TrustedTypePolicyFactory } from "./trusted-types.ts";
+import {
+  installTrustedTypes,
+  TrustedTypePolicyFactory,
+} from "./trusted-types.ts";
 import { installCaches, CacheStorage } from "./cache-storage.ts";
 import { installCompression } from "./compression.ts";
 import { installMime, BunChromiumMime } from "./mime.ts";
@@ -37,7 +45,9 @@ export interface ChromiumParityInstalled {
   dns: typeof BunChromiumDNS;
 }
 
-export function installAllChromiumPolyfills(target: any = globalThis): ChromiumParityInstalled {
+export function installAllChromiumPolyfills(
+  target: any = globalThis,
+): ChromiumParityInstalled {
   // 1. Prioritized Task Scheduling (scheduler.postTask, scheduler.yield)
   const scheduler = installScheduler(target);
 
@@ -63,7 +73,8 @@ export function installAllChromiumPolyfills(target: any = globalThis): ChromiumP
   if (typeof (Error as any).isError !== "function") {
     Object.defineProperty(Error, "isError", {
       value: (err: unknown): err is Error =>
-        err instanceof Error || Object.prototype.toString.call(err) === "[object Error]",
+        err instanceof Error ||
+        Object.prototype.toString.call(err) === "[object Error]",
       writable: true,
       configurable: true,
     });

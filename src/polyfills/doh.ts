@@ -3,7 +3,8 @@
  * Based on Chromium net/dns/public/doh_provider_entry.cc & RFC 8484 / RFC 9460
  */
 
-export type DnsRecordType = "A" | "AAAA" | "HTTPS" | "SVCB" | "CNAME" | "TXT" | "MX" | "NS" | "PTR";
+export type DnsRecordType =
+  "A" | "AAAA" | "HTTPS" | "SVCB" | "CNAME" | "TXT" | "MX" | "NS" | "PTR";
 
 export const DNS_RECORD_TYPE_MAP: Record<DnsRecordType, number> = {
   A: 1,
@@ -105,7 +106,10 @@ export class BunChromiumDNS {
       try {
         const wireQuery = buildDnsWireQuery(domain, typeNum);
         const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), options.timeoutMs ?? 5000);
+        const timeout = setTimeout(
+          () => controller.abort(),
+          options.timeoutMs ?? 5000,
+        );
 
         const res = await fetch(providerUrl, {
           method: "POST",
@@ -133,7 +137,10 @@ export class BunChromiumDNS {
     url.searchParams.set("type", type);
 
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), options.timeoutMs ?? 5000);
+    const timeout = setTimeout(
+      () => controller.abort(),
+      options.timeoutMs ?? 5000,
+    );
 
     try {
       const res = await fetch(url.toString(), {
@@ -258,7 +265,8 @@ export function installDns(target: any = globalThis): void {
       bunObj.dns.resolveDoH = BunChromiumDNS.resolveDoH.bind(BunChromiumDNS);
     }
     if (!bunObj.dns.resolveHTTPS) {
-      bunObj.dns.resolveHTTPS = BunChromiumDNS.resolveHTTPS.bind(BunChromiumDNS);
+      bunObj.dns.resolveHTTPS =
+        BunChromiumDNS.resolveHTTPS.bind(BunChromiumDNS);
     }
   }
 }

@@ -15,7 +15,10 @@ export interface MultiCacheQueryOptions extends CacheQueryOptions {
   cacheName?: string;
 }
 
-function normalizeRequestUrl(input: RequestInfo | URL): { url: string; method: string } {
+function normalizeRequestUrl(input: RequestInfo | URL): {
+  url: string;
+  method: string;
+} {
   if (typeof input === "string") {
     return { url: new URL(input, "http://localhost").href, method: "GET" };
   }
@@ -127,12 +130,17 @@ export class Cache {
     return matches[0];
   }
 
-  async matchAll(request?: RequestInfo | URL, options?: CacheQueryOptions): Promise<Response[]> {
+  async matchAll(
+    request?: RequestInfo | URL,
+    options?: CacheQueryOptions,
+  ): Promise<Response[]> {
     let entries: any[] = [];
 
     if (!request) {
       entries = this._db
-        .prepare("SELECT * FROM cache_entries WHERE cache_id = ? ORDER BY id ASC")
+        .prepare(
+          "SELECT * FROM cache_entries WHERE cache_id = ? ORDER BY id ASC",
+        )
         .all(this._cacheId) as any[];
     } else {
       const { url } = normalizeRequestUrl(request);
@@ -163,7 +171,10 @@ export class Cache {
     return results;
   }
 
-  async delete(request: RequestInfo | URL, options?: CacheQueryOptions): Promise<boolean> {
+  async delete(
+    request: RequestInfo | URL,
+    options?: CacheQueryOptions,
+  ): Promise<boolean> {
     const { url } = normalizeRequestUrl(request);
     let deletedCount = 0;
 
@@ -172,7 +183,9 @@ export class Cache {
       const allEntries = this._db
         .prepare("SELECT id, url FROM cache_entries WHERE cache_id = ?")
         .all(this._cacheId) as any[];
-      const toDelete = allEntries.filter((e) => stripSearch(e.url) === targetClean);
+      const toDelete = allEntries.filter(
+        (e) => stripSearch(e.url) === targetClean,
+      );
       for (const row of toDelete) {
         this._db.prepare("DELETE FROM cache_entries WHERE id = ?").run(row.id);
         deletedCount++;
@@ -187,12 +200,17 @@ export class Cache {
     return deletedCount > 0;
   }
 
-  async keys(request?: RequestInfo | URL, options?: CacheQueryOptions): Promise<Request[]> {
+  async keys(
+    request?: RequestInfo | URL,
+    options?: CacheQueryOptions,
+  ): Promise<Request[]> {
     let entries: any[] = [];
 
     if (!request) {
       entries = this._db
-        .prepare("SELECT url, method FROM cache_entries WHERE cache_id = ? ORDER BY id ASC")
+        .prepare(
+          "SELECT url, method FROM cache_entries WHERE cache_id = ? ORDER BY id ASC",
+        )
         .all(this._cacheId) as any[];
     } else {
       const { url } = normalizeRequestUrl(request);
@@ -204,7 +222,9 @@ export class Cache {
         entries = allEntries.filter((e) => stripSearch(e.url) === targetClean);
       } else {
         entries = this._db
-          .prepare("SELECT url, method FROM cache_entries WHERE cache_id = ? AND url = ?")
+          .prepare(
+            "SELECT url, method FROM cache_entries WHERE cache_id = ? AND url = ?",
+          )
           .all(this._cacheId, url) as any[];
       }
     }
@@ -256,12 +276,15 @@ export class CacheStorage {
     let cache = this._cacheMap.get(cacheName);
     if (cache) return cache;
 
-    let row = this._db.prepare("SELECT id FROM caches WHERE name = ?").get(cacheName) as
-      { id: number } | undefined;
+    let row = this._db
+      .prepare("SELECT id FROM caches WHERE name = ?")
+      .get(cacheName) as { id: number } | undefined;
 
     if (!row) {
       this._db.prepare("INSERT INTO caches (name) VALUES (?)").run(cacheName);
-      row = this._db.prepare("SELECT id FROM caches WHERE name = ?").get(cacheName) as {
+      row = this._db
+        .prepare("SELECT id FROM caches WHERE name = ?")
+        .get(cacheName) as {
         id: number;
       };
     }
@@ -272,18 +295,23 @@ export class CacheStorage {
   }
 
   async has(cacheName: string): Promise<boolean> {
-    const row = this._db.prepare("SELECT 1 FROM caches WHERE name = ?").get(cacheName);
+    const row = this._db
+      .prepare("SELECT 1 FROM caches WHERE name = ?")
+      .get(cacheName);
     return !!row;
   }
 
   async delete(cacheName: string): Promise<boolean> {
-    const row = this._db.prepare("SELECT id FROM caches WHERE name = ?").get(cacheName) as
-      { id: number } | undefined;
+    const row = this._db
+      .prepare("SELECT id FROM caches WHERE name = ?")
+      .get(cacheName) as { id: number } | undefined;
 
     if (!row) return false;
 
     this._db.transaction(() => {
-      this._db.prepare("DELETE FROM cache_entries WHERE cache_id = ?").run(row.id);
+      this._db
+        .prepare("DELETE FROM cache_entries WHERE cache_id = ?")
+        .run(row.id);
       this._db.prepare("DELETE FROM caches WHERE id = ?").run(row.id);
     })();
 
@@ -292,7 +320,9 @@ export class CacheStorage {
   }
 
   async keys(): Promise<string[]> {
-    const rows = this._db.prepare("SELECT name FROM caches ORDER BY id ASC").all() as {
+    const rows = this._db
+      .prepare("SELECT name FROM caches ORDER BY id ASC")
+      .all() as {
       name: string;
     }[];
     return rows.map((r) => r.name);

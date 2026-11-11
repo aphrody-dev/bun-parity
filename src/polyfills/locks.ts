@@ -49,7 +49,8 @@ export class LockManager {
   private _reqId = 0;
   private _held: Map<string, ActiveLockEntry[]> = new Map();
   private _pending: QueuedLockRequest[] = [];
-  private readonly _clientId = "bun-process-" + Math.random().toString(36).slice(2, 9);
+  private readonly _clientId =
+    "bun-process-" + Math.random().toString(36).slice(2, 9);
 
   async request<T>(
     name: string,
@@ -60,7 +61,10 @@ export class LockManager {
       throw new TypeError("Lock name must be a non-empty string");
     }
     if (name.startsWith("-")) {
-      throw new DOMException("Lock name cannot start with '-'", "NotSupportedError");
+      throw new DOMException(
+        "Lock name cannot start with '-'",
+        "NotSupportedError",
+      );
     }
 
     let options: LockOptions = {};
@@ -82,15 +86,22 @@ export class LockManager {
     const signal = options.signal;
 
     if (steal && mode !== "exclusive") {
-      throw new DOMException("steal option requires exclusive mode", "NotSupportedError");
+      throw new DOMException(
+        "steal option requires exclusive mode",
+        "NotSupportedError",
+      );
     }
     if (steal && ifAvailable) {
-      throw new DOMException("steal and ifAvailable cannot both be true", "NotSupportedError");
+      throw new DOMException(
+        "steal and ifAvailable cannot both be true",
+        "NotSupportedError",
+      );
     }
 
     if (signal?.aborted) {
       const reason =
-        signal.reason ?? new DOMException("The lock request was aborted", "AbortError");
+        signal.reason ??
+        new DOMException("The lock request was aborted", "AbortError");
       return Promise.reject(reason);
     }
 
@@ -101,7 +112,8 @@ export class LockManager {
       steal ||
       (!hasPending &&
         (active.length === 0 ||
-          (mode === "shared" && active.every((a) => a.lock.mode === "shared"))));
+          (mode === "shared" &&
+            active.every((a) => a.lock.mode === "shared"))));
 
     if (!canAcquireNow && ifAvailable) {
       // Cannot acquire immediately, ifAvailable is true
@@ -159,7 +171,8 @@ export class LockManager {
               this._pending.splice(idx, 1);
             }
             const reason =
-              signal.reason ?? new DOMException("The lock request was aborted", "AbortError");
+              signal.reason ??
+              new DOMException("The lock request was aborted", "AbortError");
             reject(reason);
           };
           signal.addEventListener("abort", onAbort, { once: true });
@@ -211,7 +224,9 @@ export class LockManager {
     } else {
       // Grant all contiguous shared requests
       while (this._pending.length > 0) {
-        const nextIdx = this._pending.findIndex((p) => p.name === name && p.mode === "shared");
+        const nextIdx = this._pending.findIndex(
+          (p) => p.name === name && p.mode === "shared",
+        );
         if (nextIdx === -1) break;
         const [next] = this._pending.splice(nextIdx, 1);
         next.grant();

@@ -5,7 +5,9 @@
 
 import type { DomainReport, ParityItem, ScanOptions } from "../types.ts";
 
-export async function scanStackDomain(_options: ScanOptions): Promise<DomainReport> {
+export async function scanStackDomain(
+  _options: ScanOptions,
+): Promise<DomainReport> {
   const items: ParityItem[] = [];
 
   // 1. W3C Cache API Storage Engine
@@ -27,10 +29,12 @@ export async function scanStackDomain(_options: ScanOptions): Promise<DomainRepo
   items.push({
     domain: "stack",
     name: "Fetch Priority Hints (priority: 'high' | 'low' | 'auto')",
-    chromiumSource: "third_party/blink/renderer/core/fetch/fetch_request_data.cc",
+    chromiumSource:
+      "third_party/blink/renderer/core/fetch/fetch_request_data.cc",
     bunTarget: "fetch(url, { priority })",
     status: "parity",
-    details: "Bun fetch accepts standard RequestInit and forwards priority hints",
+    details:
+      "Bun fetch accepts standard RequestInit and forwards priority hints",
     patchAvailable: false,
   });
 
@@ -41,7 +45,8 @@ export async function scanStackDomain(_options: ScanOptions): Promise<DomainRepo
     chromiumSource: "net/http/http_response_headers.cc",
     bunTarget: "Bun.serve Response headers",
     status: "parity",
-    details: "Full Server-Timing header construction and measurement integration",
+    details:
+      "Full Server-Timing header construction and measurement integration",
     patchAvailable: false,
   });
 
@@ -59,7 +64,10 @@ export async function scanStackDomain(_options: ScanOptions): Promise<DomainRepo
   const nativeParityCount = items.filter((i) => i.status === "parity").length;
   const patchedParityCount = items.filter(
     (i) =>
-      i.status === "parity" || i.status === "partial" || i.status === "patched" || i.patchAvailable,
+      i.status === "parity" ||
+      i.status === "partial" ||
+      i.status === "patched" ||
+      i.patchAvailable,
   ).length;
 
   return {

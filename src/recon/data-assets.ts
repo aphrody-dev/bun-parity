@@ -8,7 +8,9 @@ import { join } from "node:path";
 import type { DomainReport, ParityItem, ScanOptions } from "../types.ts";
 import { CHROMIUM_MIME_MAP } from "../polyfills/mime.ts";
 
-export async function scanDataAssetsDomain(options: ScanOptions): Promise<DomainReport> {
+export async function scanDataAssetsDomain(
+  options: ScanOptions,
+): Promise<DomainReport> {
   const chromiumPath = options.chromiumPath ?? "C:/src/chromium/src";
   const mimeFile = join(chromiumPath, "net/base/mime_util.cc");
 
@@ -16,7 +18,8 @@ export async function scanDataAssetsDomain(options: ScanOptions): Promise<Domain
   if (existsSync(mimeFile)) {
     try {
       const content = readFileSync(mimeFile, "utf-8");
-      const mimeMatches = content.match(/\{"([a-zA-Z0-9_\-\.\+]+)\/[a-zA-Z0-9_\-\.\+]+",/g) ?? [];
+      const mimeMatches =
+        content.match(/\{"([a-zA-Z0-9_\-\.\+]+)\/[a-zA-Z0-9_\-\.\+]+",/g) ?? [];
       chromiumMimeCount = new Set(mimeMatches).size;
     } catch {
       chromiumMimeCount = 110;
@@ -27,10 +30,22 @@ export async function scanDataAssetsDomain(options: ScanOptions): Promise<Domain
 
   const testExtensions = [
     { ext: "wasm", expected: "application/wasm", name: "WebAssembly (.wasm)" },
-    { ext: "wgsl", expected: "text/wgsl", name: "WebGPU Shading Language (.wgsl)" },
-    { ext: "avif", expected: "image/avif", name: "AV1 Image File Format (.avif)" },
+    {
+      ext: "wgsl",
+      expected: "text/wgsl",
+      name: "WebGPU Shading Language (.wgsl)",
+    },
+    {
+      ext: "avif",
+      expected: "image/avif",
+      name: "AV1 Image File Format (.avif)",
+    },
     { ext: "jxl", expected: "image/jxl", name: "JPEG XL (.jxl)" },
-    { ext: "woff2", expected: "font/woff2", name: "Web Open Font Format 2.0 (.woff2)" },
+    {
+      ext: "woff2",
+      expected: "font/woff2",
+      name: "Web Open Font Format 2.0 (.woff2)",
+    },
     {
       ext: "webmanifest",
       expected: "application/manifest+json",
@@ -79,7 +94,8 @@ export async function scanDataAssetsDomain(options: ScanOptions): Promise<Domain
       status,
       details,
       patchAvailable: status !== "parity",
-      patchedBy: status !== "parity" ? "BunChromiumMime table augmentation" : undefined,
+      patchedBy:
+        status !== "parity" ? "BunChromiumMime table augmentation" : undefined,
     });
   }
 
@@ -98,7 +114,10 @@ export async function scanDataAssetsDomain(options: ScanOptions): Promise<Domain
   const nativeParityCount = items.filter((i) => i.status === "parity").length;
   const patchedParityCount = items.filter(
     (i) =>
-      i.status === "parity" || i.status === "partial" || i.status === "patched" || i.patchAvailable,
+      i.status === "parity" ||
+      i.status === "partial" ||
+      i.status === "patched" ||
+      i.patchAvailable,
   ).length;
 
   return {

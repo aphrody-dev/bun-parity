@@ -24,7 +24,9 @@ function countIdlFiles(dir: string): number {
   return count;
 }
 
-export async function scanApiDomain(options: ScanOptions): Promise<DomainReport> {
+export async function scanApiDomain(
+  options: ScanOptions,
+): Promise<DomainReport> {
   const chromiumPath = options.chromiumPath ?? "C:/src/chromium/src";
   const coreDir = join(chromiumPath, "third_party/blink/renderer/core");
   const modDir = join(chromiumPath, "third_party/blink/renderer/modules");
@@ -40,7 +42,8 @@ export async function scanApiDomain(options: ScanOptions): Promise<DomainReport>
   items.push({
     domain: "api",
     name: "URLPattern API",
-    chromiumSource: "third_party/blink/renderer/core/url_pattern/url_pattern.idl",
+    chromiumSource:
+      "third_party/blink/renderer/core/url_pattern/url_pattern.idl",
     bunTarget: "globalThis.URLPattern",
     status: hasURLPattern ? "parity" : "missing",
     details: hasURLPattern
@@ -56,14 +59,16 @@ export async function scanApiDomain(options: ScanOptions): Promise<DomainReport>
   items.push({
     domain: "api",
     name: "Prioritized Task Scheduling (scheduler.postTask & scheduler.yield)",
-    chromiumSource: "third_party/blink/renderer/modules/scheduler/scheduler.idl",
+    chromiumSource:
+      "third_party/blink/renderer/modules/scheduler/scheduler.idl",
     bunTarget: "globalThis.scheduler",
     status: hasScheduler ? "parity" : "missing",
     details: hasScheduler
       ? "Prioritized Task Scheduling available"
       : "Native Bun lacks scheduler global. Patched via chromium-parity-preload.",
     patchAvailable: true,
-    patchedBy: "chromium-parity-preload.ts (PrioritizedScheduler / TaskController)",
+    patchedBy:
+      "chromium-parity-preload.ts (PrioritizedScheduler / TaskController)",
   });
 
   // 3. W3C Web Locks API (navigator.locks.request)
@@ -90,7 +95,8 @@ export async function scanApiDomain(options: ScanOptions): Promise<DomainReport>
   items.push({
     domain: "api",
     name: "W3C Trusted Types API (trustedTypes.createPolicy, TrustedHTML...)",
-    chromiumSource: "third_party/blink/renderer/core/trustedtypes/trusted_type_policy_factory.idl",
+    chromiumSource:
+      "third_party/blink/renderer/core/trustedtypes/trusted_type_policy_factory.idl",
     bunTarget: "globalThis.trustedTypes",
     status: hasTrustedTypes ? "parity" : "missing",
     details: hasTrustedTypes
@@ -107,7 +113,8 @@ export async function scanApiDomain(options: ScanOptions): Promise<DomainReport>
   items.push({
     domain: "api",
     name: "W3C Cache API (caches.open, CacheStorage, Cache)",
-    chromiumSource: "third_party/blink/renderer/modules/cache_storage/cache_storage.idl",
+    chromiumSource:
+      "third_party/blink/renderer/modules/cache_storage/cache_storage.idl",
     bunTarget: "globalThis.caches",
     status: hasCaches ? "parity" : "missing",
     details: hasCaches
@@ -126,7 +133,8 @@ export async function scanApiDomain(options: ScanOptions): Promise<DomainReport>
   items.push({
     domain: "api",
     name: "CompressionStream ('br' brotli alias & 'zstd')",
-    chromiumSource: "third_party/blink/renderer/modules/compression/compression_stream.idl",
+    chromiumSource:
+      "third_party/blink/renderer/modules/compression/compression_stream.idl",
     bunTarget: "globalThis.CompressionStream",
     status: supportsBr ? "parity" : "missing",
     details: supportsBr
@@ -137,11 +145,13 @@ export async function scanApiDomain(options: ScanOptions): Promise<DomainReport>
   });
 
   // 7. BroadcastChannel API
-  const hasBroadcastChannel = typeof (globalThis as any).BroadcastChannel === "function";
+  const hasBroadcastChannel =
+    typeof (globalThis as any).BroadcastChannel === "function";
   items.push({
     domain: "api",
     name: "BroadcastChannel API",
-    chromiumSource: "third_party/blink/renderer/modules/broadcastchannel/broadcast_channel.idl",
+    chromiumSource:
+      "third_party/blink/renderer/modules/broadcastchannel/broadcast_channel.idl",
     bunTarget: "globalThis.BroadcastChannel",
     status: hasBroadcastChannel ? "parity" : "missing",
     details: hasBroadcastChannel
@@ -151,11 +161,13 @@ export async function scanApiDomain(options: ScanOptions): Promise<DomainReport>
   });
 
   // 8. PerformanceObserver & User Timing Level 3
-  const hasPerfObserver = typeof (globalThis as any).PerformanceObserver === "function";
+  const hasPerfObserver =
+    typeof (globalThis as any).PerformanceObserver === "function";
   items.push({
     domain: "api",
     name: "PerformanceObserver & User Timing Level 3",
-    chromiumSource: "third_party/blink/renderer/core/timing/performance_observer.idl",
+    chromiumSource:
+      "third_party/blink/renderer/core/timing/performance_observer.idl",
     bunTarget: "globalThis.PerformanceObserver",
     status: hasPerfObserver ? "parity" : "missing",
     details: hasPerfObserver
@@ -169,7 +181,8 @@ export async function scanApiDomain(options: ScanOptions): Promise<DomainReport>
   items.push({
     domain: "api",
     name: "CookieStore API",
-    chromiumSource: "third_party/blink/renderer/modules/cookie_store/cookie_store.idl",
+    chromiumSource:
+      "third_party/blink/renderer/modules/cookie_store/cookie_store.idl",
     bunTarget: "globalThis.cookieStore",
     status: hasCookieStore ? "parity" : "partial",
     details: hasCookieStore
@@ -195,7 +208,10 @@ export async function scanApiDomain(options: ScanOptions): Promise<DomainReport>
   const nativeParityCount = items.filter((i) => i.status === "parity").length;
   const patchedParityCount = items.filter(
     (i) =>
-      i.status === "parity" || i.status === "patched" || i.status === "partial" || i.patchAvailable,
+      i.status === "parity" ||
+      i.status === "patched" ||
+      i.status === "partial" ||
+      i.patchAvailable,
   ).length;
 
   return {

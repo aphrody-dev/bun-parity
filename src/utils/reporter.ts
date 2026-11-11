@@ -8,9 +8,13 @@ import type { ParityMatrix } from "../types.ts";
 export function formatTerminalSummary(matrix: ParityMatrix): string {
   const lines: string[] = [];
 
-  lines.push("================================================================================");
+  lines.push(
+    "================================================================================",
+  );
   lines.push("       CHROMIUM UPSTREAM VS BUN FULL-STACK PARITY MATRIX (bpt)");
-  lines.push("================================================================================");
+  lines.push(
+    "================================================================================",
+  );
   lines.push(`Scanned At:       ${matrix.scannedAt}`);
   lines.push(`Bun Version:      v${matrix.bunVersion}`);
   lines.push(`Chromium Source:  ${matrix.chromiumPath}`);
@@ -21,7 +25,9 @@ export function formatTerminalSummary(matrix: ParityMatrix): string {
   lines.push(
     `Patched Score:    ${matrix.overallPatchedScore}% (${matrix.patchedCompliantCount}/${matrix.totalFeaturesScanned} features compliant)`,
   );
-  lines.push("--------------------------------------------------------------------------------");
+  lines.push(
+    "--------------------------------------------------------------------------------",
+  );
   lines.push(
     "Domain".padEnd(14) +
       "Scanned".padEnd(10) +
@@ -30,7 +36,9 @@ export function formatTerminalSummary(matrix: ParityMatrix): string {
       "Native %".padEnd(12) +
       "Effective %",
   );
-  lines.push("--------------------------------------------------------------------------------");
+  lines.push(
+    "--------------------------------------------------------------------------------",
+  );
 
   for (const [key, dom] of Object.entries(matrix.domains)) {
     const nativePct = `${Math.round((dom.nativeParityCount / (dom.totalScanned || 1)) * 100)}%`;
@@ -45,7 +53,9 @@ export function formatTerminalSummary(matrix: ParityMatrix): string {
     );
   }
 
-  lines.push("================================================================================");
+  lines.push(
+    "================================================================================",
+  );
   return lines.join("\n");
 }
 
@@ -54,7 +64,9 @@ export function generateMarkdownReport(matrix: ParityMatrix): string {
 
   lines.push("# Chromium Upstream vs Bun Full-Stack Parity Report");
   lines.push("");
-  lines.push(`> Generated automatically by \`bpt\` (Bun Parity Tool) on ${matrix.scannedAt}`);
+  lines.push(
+    `> Generated automatically by \`bpt\` (Bun Parity Tool) on ${matrix.scannedAt}`,
+  );
   lines.push("");
   lines.push("## Executive Summary");
   lines.push("");
@@ -117,9 +129,13 @@ export function generateMarkdownReport(matrix: ParityMatrix): string {
   lines.push("## Automated Patching & Drop-in Integration");
   lines.push("");
   lines.push("### Artifact 1: Standalone Runtime Preload Patch");
-  lines.push("To execute any Bun application or script with 100% Chromium Web Platform parity:");
+  lines.push(
+    "To execute any Bun application or script with 100% Chromium Web Platform parity:",
+  );
   lines.push("```bash");
-  lines.push("bun --preload C:/src/bun-parity/dist/chromium-parity-preload.ts your-script.ts");
+  lines.push(
+    "bun --preload C:/src/bun-parity/dist/chromium-parity-preload.ts your-script.ts",
+  );
   lines.push("```");
   lines.push("Or in code:");
   lines.push("```ts");

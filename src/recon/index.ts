@@ -13,21 +13,24 @@ import { scanDnsDomain } from "./dns.ts";
 import { scanTlsDomain } from "./tls.ts";
 import { scanStackDomain } from "./stack.ts";
 
-export async function runFullParityScan(options: ScanOptions = {}): Promise<ParityMatrix> {
+export async function runFullParityScan(
+  options: ScanOptions = {},
+): Promise<ParityMatrix> {
   const chromiumPath = options.chromiumPath ?? "C:/src/chromium/src";
   const bunPath = options.bunPath ?? "C:/src/bun";
 
-  const [html, css, js, api, texte, dataAssets, dns, tls, stack] = await Promise.all([
-    scanHtmlDomain({ chromiumPath, bunPath }),
-    scanCssDomain({ chromiumPath, bunPath }),
-    scanJsDomain({ chromiumPath, bunPath }),
-    scanApiDomain({ chromiumPath, bunPath }),
-    scanTexteDomain({ chromiumPath, bunPath }),
-    scanDataAssetsDomain({ chromiumPath, bunPath }),
-    scanDnsDomain({ chromiumPath, bunPath }),
-    scanTlsDomain({ chromiumPath, bunPath }),
-    scanStackDomain({ chromiumPath, bunPath }),
-  ]);
+  const [html, css, js, api, texte, dataAssets, dns, tls, stack] =
+    await Promise.all([
+      scanHtmlDomain({ chromiumPath, bunPath }),
+      scanCssDomain({ chromiumPath, bunPath }),
+      scanJsDomain({ chromiumPath, bunPath }),
+      scanApiDomain({ chromiumPath, bunPath }),
+      scanTexteDomain({ chromiumPath, bunPath }),
+      scanDataAssetsDomain({ chromiumPath, bunPath }),
+      scanDnsDomain({ chromiumPath, bunPath }),
+      scanTlsDomain({ chromiumPath, bunPath }),
+      scanStackDomain({ chromiumPath, bunPath }),
+    ]);
 
   const domains = {
     html,
@@ -51,7 +54,9 @@ export async function runFullParityScan(options: ScanOptions = {}): Promise<Pari
     patchedCompliantCount += dom.patchedParityCount;
   }
 
-  const overallNativeScore = Math.round((nativeCompliantCount / (totalFeaturesScanned || 1)) * 100);
+  const overallNativeScore = Math.round(
+    (nativeCompliantCount / (totalFeaturesScanned || 1)) * 100,
+  );
   const overallPatchedScore = Math.round(
     (patchedCompliantCount / (totalFeaturesScanned || 1)) * 100,
   );

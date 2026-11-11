@@ -7,9 +7,14 @@ import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import type { DomainReport, ParityItem, ScanOptions } from "../types.ts";
 
-export async function scanTlsDomain(options: ScanOptions): Promise<DomainReport> {
+export async function scanTlsDomain(
+  options: ScanOptions,
+): Promise<DomainReport> {
   const chromiumPath = options.chromiumPath ?? "C:/src/chromium/src";
-  const bsslH = join(chromiumPath, "third_party/boringssl/src/include/openssl/ssl.h");
+  const bsslH = join(
+    chromiumPath,
+    "third_party/boringssl/src/include/openssl/ssl.h",
+  );
 
   let mlkemDefinedInChromium = false;
   if (existsSync(bsslH)) {
@@ -32,7 +37,8 @@ export async function scanTlsDomain(options: ScanOptions): Promise<DomainReport>
     chromiumSource: "net/ssl/ssl_cipher_suite_names.cc",
     bunTarget: "Bun BoringSSL tls layer",
     status: "parity",
-    details: "Supported natively via Bun BoringSSL TLS engine with constant-time AEAD",
+    details:
+      "Supported natively via Bun BoringSSL TLS engine with constant-time AEAD",
     patchAvailable: false,
   });
 
@@ -56,7 +62,8 @@ export async function scanTlsDomain(options: ScanOptions): Promise<DomainReport>
     chromiumSource: "net/ssl/ssl_client_session_cache.cc",
     bunTarget: "Bun.serve({ tls: { alpnProtocols: ['h2', 'http/1.1'] } })",
     status: "parity",
-    details: "Supported natively in Bun.serve and node:tls with explicit ALPN strings",
+    details:
+      "Supported natively in Bun.serve and node:tls with explicit ALPN strings",
     patchAvailable: false,
   });
 
@@ -75,7 +82,10 @@ export async function scanTlsDomain(options: ScanOptions): Promise<DomainReport>
   const nativeParityCount = items.filter((i) => i.status === "parity").length;
   const patchedParityCount = items.filter(
     (i) =>
-      i.status === "parity" || i.status === "partial" || i.status === "patched" || i.patchAvailable,
+      i.status === "parity" ||
+      i.status === "partial" ||
+      i.status === "patched" ||
+      i.patchAvailable,
   ).length;
 
   return {

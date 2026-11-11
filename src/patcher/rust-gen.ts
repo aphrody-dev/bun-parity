@@ -3,7 +3,13 @@
  * Synthesizes patches/*.patch and RUST_INTEGRATION_SPEC.md
  */
 
-import { existsSync, mkdirSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
+import {
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  unlinkSync,
+  writeFileSync,
+} from "node:fs";
 import { join } from "node:path";
 import { execSync } from "node:child_process";
 import type { PatchOptions } from "../types.ts";
@@ -28,23 +34,33 @@ export async function generateRustPatches(
   if (existsSync(mimeListPath)) {
     const origMimeContent = readFileSync(mimeListPath, "utf-8");
     const augmentedMimeContent =
-      origMimeContent + "\nimage/jxl\ntext/wgsl\napplication/vnd.bun.aot\naudio/opus\n";
+      origMimeContent +
+      "\nimage/jxl\ntext/wgsl\napplication/vnd.bun.aot\naudio/opus\n";
     writeFileSync(mimeListPath, augmentedMimeContent, "utf-8");
 
     try {
-      const diff1 = execSync("git -C C:/src/bun diff src/http_types/mime_type_list.txt", {
-        encoding: "utf-8",
-      });
+      const diff1 = execSync(
+        "git -C C:/src/bun diff src/http_types/mime_type_list.txt",
+        {
+          encoding: "utf-8",
+        },
+      );
       writeFileSync(patch1Path, diff1, "utf-8");
       generatedPatches.push(patch1Path);
 
       // Revert repository state
-      execSync("git -C C:/src/bun checkout -- src/http_types/mime_type_list.txt");
+      execSync(
+        "git -C C:/src/bun checkout -- src/http_types/mime_type_list.txt",
+      );
 
       // Verify patch with git apply --check
-      execSync(`git -C C:/src/bun apply --check "${patch1Path.replace(/\\/g, "/")}"`);
+      execSync(
+        `git -C C:/src/bun apply --check "${patch1Path.replace(/\\/g, "/")}"`,
+      );
     } catch (err: any) {
-      execSync("git -C C:/src/bun checkout -- src/http_types/mime_type_list.txt");
+      execSync(
+        "git -C C:/src/bun checkout -- src/http_types/mime_type_list.txt",
+      );
       throw new Error(
         `Failed generating or validating 0001-mime-chromium-types.patch: ${err.message}`,
       );

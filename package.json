@@ -1,5 +1,5 @@
 {
-  "name": "bun-parity",
+  "name": "@aphrody/bun-parity",
   "version": "1.0.0",
   "description": "Automated Chromium Upstream vs Bun Full-Stack Parity Recon & Auto-Patcher",
   "type": "module",

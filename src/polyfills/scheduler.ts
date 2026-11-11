@@ -37,7 +37,9 @@ export class TaskSignal extends AbortSignal {
     if (this._priority === newPriority) return;
     const previousPriority = this._priority;
     this._priority = newPriority;
-    const event = new TaskPriorityChangeEvent("prioritychange", { previousPriority });
+    const event = new TaskPriorityChangeEvent("prioritychange", {
+      previousPriority,
+    });
     this.dispatchEvent(event);
   }
 }
@@ -98,7 +100,8 @@ export class PrioritizedScheduler {
 
   private _sortQueue() {
     this._queue.sort((a, b) => {
-      const weightDiff = PRIORITY_WEIGHTS[b.priority] - PRIORITY_WEIGHTS[a.priority];
+      const weightDiff =
+        PRIORITY_WEIGHTS[b.priority] - PRIORITY_WEIGHTS[a.priority];
       if (weightDiff !== 0) return weightDiff;
       return a.id - b.id; // FIFO for same priority
     });
@@ -116,7 +119,8 @@ export class PrioritizedScheduler {
         const task = this._queue.shift()!;
         if (task.signal?.aborted) {
           const reason =
-            task.signal.reason ?? new DOMException("The task was aborted", "AbortError");
+            task.signal.reason ??
+            new DOMException("The task was aborted", "AbortError");
           task.reject(reason);
           continue;
         }
@@ -136,19 +140,25 @@ export class PrioritizedScheduler {
     }
   }
 
-  postTask<T>(callback: () => T | PromiseLike<T>, options?: SchedulerPostTaskOptions): Promise<T> {
+  postTask<T>(
+    callback: () => T | PromiseLike<T>,
+    options?: SchedulerPostTaskOptions,
+  ): Promise<T> {
     if (typeof callback !== "function") {
       return Promise.reject(new TypeError("callback must be a function"));
     }
 
     const priority: TaskPriority =
       options?.priority ??
-      (options?.signal instanceof TaskSignal ? options.signal.priority : "user-visible");
+      (options?.signal instanceof TaskSignal
+        ? options.signal.priority
+        : "user-visible");
     const delay = options?.delay ?? 0;
     const signal = options?.signal;
 
     if (signal?.aborted) {
-      const reason = signal.reason ?? new DOMException("The task was aborted", "AbortError");
+      const reason =
+        signal.reason ?? new DOMException("The task was aborted", "AbortError");
       return Promise.reject(reason);
     }
 
@@ -157,7 +167,9 @@ export class PrioritizedScheduler {
 
       const scheduleAction = () => {
         if (signal?.aborted) {
-          const reason = signal.reason ?? new DOMException("The task was aborted", "AbortError");
+          const reason =
+            signal.reason ??
+            new DOMException("The task was aborted", "AbortError");
           reject(reason);
           return;
         }
@@ -176,7 +188,9 @@ export class PrioritizedScheduler {
             task.priority = signal.priority;
             this._sortQueue();
           };
-          signal.addEventListener("prioritychange", onPriorityChange, { once: false });
+          signal.addEventListener("prioritychange", onPriorityChange, {
+            once: false,
+          });
         }
 
         if (signal) {
@@ -185,7 +199,9 @@ export class PrioritizedScheduler {
             if (idx !== -1) {
               this._queue.splice(idx, 1);
             }
-            const reason = signal.reason ?? new DOMException("The task was aborted", "AbortError");
+            const reason =
+              signal.reason ??
+              new DOMException("The task was aborted", "AbortError");
             reject(reason);
           };
           signal.addEventListener("abort", onAbort, { once: true });
@@ -202,7 +218,8 @@ export class PrioritizedScheduler {
             () => {
               clearTimeout(timer);
               const reason =
-                signal.reason ?? new DOMException("The task was aborted", "AbortError");
+                signal.reason ??
+                new DOMException("The task was aborted", "AbortError");
               reject(reason);
             },
             { once: true },
@@ -221,7 +238,9 @@ export class PrioritizedScheduler {
   }
 }
 
-export function installScheduler(target: any = globalThis): PrioritizedScheduler {
+export function installScheduler(
+  target: any = globalThis,
+): PrioritizedScheduler {
   const schedulerInstance = new PrioritizedScheduler();
 
   if (!target.scheduler) {
